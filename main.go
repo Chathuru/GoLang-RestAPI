@@ -94,8 +94,49 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	r.GET("/", hello)
-	r.GET("/ListAllEmployes", func(context *gin.Context) {
+	r.GET("/employees", func(context *gin.Context) {
 		context.IndentedJSON(http.StatusOK, ListAllEmployes(db))
+	})
+
+	r.GET("/employees/employee/:empNo", func(context *gin.Context) {
+		empNo := context.Params.ByName("empNo")
+		id, _ := strconv.Atoi(empNo)
+		output, err := SelectById(db, id)
+
+		if err != nil {
+			context.JSON(http.StatusOK, gin.H{"message": err.Error()})
+		} else {
+			context.IndentedJSON(http.StatusOK, output)
+		}
+	})
+
+	r.POST("/employees/employee", func(context *gin.Context) {
+		var employee Employee
+		err := context.ShouldBind(&employee)
+		if err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		} else {
+			AddEmployee(db, employee)
+			context.String(http.StatusOK, "Success")
+		}
+	})
+
+	r.DELETE("/employees/employee/:empNo", func(context *gin.Context) {
+		empNo := context.Params.ByName("empNo")
+		id, _ := strconv.Atoi(empNo)
+		DeleteById(db, id)
+		context.JSON(http.StatusOK, gin.H{"message": "Employee " + empNo + " deleted successfully"})
+	})
+
+	r.POST("/AddEmployee", func(context *gin.Context) {
+		var employee Employee
+		err := context.ShouldBind(&employee)
+		if err != nil {
+			context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		} else {
+			AddEmployee(db, employee)
+			context.String(http.StatusOK, "Success")
+		}
 	})
 
 	r.GET("/GetById/:empNo", func(context *gin.Context) {
@@ -110,17 +151,6 @@ func main() {
 		}
 	})
 
-	r.POST("/AddEmployee", func(context *gin.Context) {
-		var employee Employee
-		err := context.ShouldBind(&employee)
-		if err != nil {
-			context.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		} else {
-			AddEmployee(db, employee)
-			context.String(http.StatusOK, "Success")
-		}
-	})
-
 	r.GET("/DeleteById/:empNo", func(context *gin.Context) {
 		empNo := context.Params.ByName("empNo")
 		id, _ := strconv.Atoi(empNo)
@@ -132,5 +162,7 @@ func main() {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Bad"})
 	})
 
+	log.Println("*** " +
+		"Server Started ***")
 	r.Run("0.0.0.0:8080")
 }

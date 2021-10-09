@@ -1,0 +1,126 @@
+swagger: "2.0"
+info:
+  description: "GoLang Employee list"
+  version: "0.0.1"
+  title: "Swagger Employees List"
+host: "petstore.swagger.io"
+tags:
+  - name: "employees"
+    description: "Operations about employees"
+schemes:
+  - "http"
+paths:
+  /:
+    get:
+      summary: "Greeting from the server"
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/ApiResponse"
+  /employees:
+    get:
+      tags:
+        - "employees"
+      summary: "List all employees"
+      description: ""
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Employee"
+    post:
+      tags:
+        - "employees"
+      summary: "Add new employee"
+      description: ""
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Employee Details"
+          required: true
+          schema:
+            $ref: "#/definitions/Employee"
+      responses:
+        "200":
+          description: "200 response"
+  /employee/{empNo}:
+    get:
+      tags:
+        - "employees"
+      summary: "Find employee by ID"
+      description: "Returns a single employee"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "empNo"
+          in: "path"
+          description: "ID of employee to return"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Employee"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Pet not found"
+    delete:
+      tags:
+        - "employees"
+      summary: "Deletes a employee from the db"
+      description: ""
+      produces:
+        - "application/json"
+      parameters:
+        - name: "empNo"
+          in: "path"
+          description: "Employee id to delete"
+          required: true
+          type: "integer"
+          format: "int64"
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Invalid ID supplied"
+        "404":
+          description: "Employee not found"
+definitions:
+  Employee:
+    type: "object"
+    properties:
+      Emp_no:
+        type: "integer"
+        format: "int64"
+      First_name:
+        type: "string"
+      Last_name:
+        type: "string"
+      Gender:
+        type: "string"
+        description: "Male / Female"
+      Birth_date:
+        type: "string"
+        format: "date"
+      Hire_date:
+        type: "string"
+        format: "date"
+  ApiResponse:
+    type: "object"
+    properties:
+      message:
+        type: "string"

@@ -1,0 +1,126 @@
+openapi: 3.0.1
+info:
+  title: Swagger Employees List
+  description: GoLang Employee list
+  version: 0.0.1
+servers:
+  - url: http://petstore.swagger.io/
+tags:
+  - name: employees
+    description: Operations about employees
+paths:
+  /:
+    get:
+      summary: Greeting from the server
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /employees:
+    get:
+      tags:
+        - employees
+      summary: List all employees
+      responses:
+        200:
+          description: 200 response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Employee'
+    post:
+      tags:
+        - employees
+      summary: Add new employee
+      requestBody:
+        description: Employee Details
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Employee'
+        required: true
+      responses:
+        200:
+          description: 200 response
+          content: {}
+      x-codegen-request-body-name: body
+  /employee/{empNo}:
+    get:
+      tags:
+        - employees
+      summary: Find employee by ID
+      description: Returns a single employee
+      parameters:
+        - name: empNo
+          in: path
+          description: ID of employee to return
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Pet not found
+          content: {}
+    delete:
+      tags:
+        - employees
+      summary: Deletes a employee from the db
+      parameters:
+        - name: empNo
+          in: path
+          description: Employee id to delete
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: successful operation
+          content: {}
+        400:
+          description: Invalid ID supplied
+          content: {}
+        404:
+          description: Employee not found
+          content: {}
+components:
+  schemas:
+    Employee:
+      type: object
+      properties:
+        Emp_no:
+          type: integer
+          format: int64
+        First_name:
+          type: string
+        Last_name:
+          type: string
+        Gender:
+          type: string
+          description: Male / Female
+        Birth_date:
+          type: string
+          format: date
+        Hire_date:
+          type: string
+          format: date
+    ApiResponse:
+      type: object
+      properties:
+        message:
+          type: string
